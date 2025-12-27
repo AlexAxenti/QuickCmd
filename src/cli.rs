@@ -9,8 +9,7 @@ use clap::{Parser, Subcommand};
     subcommand_required = true,
     subcommand_help_heading = "Commands", 
     long_about = None,
-    after_help = r#"
-Examples:
+    after_help = r#"Examples:
     qc s up -- docker compose up -d
     qc r up
 "#,
@@ -90,7 +89,7 @@ Examples:
     #[command(
         alias = "rm",
         // visible_alias = "rm",
-        about = "Save a command (alias: rm)",
+        about = "Remove a command (alias: rm)",
         long_about = r#"
 Remove a saved command
 

@@ -1,9 +1,9 @@
 mod cli;
+mod model;
 
 use cli::{Cli, Commands};
+use model::FileJson;
 use clap::Parser;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::fs;
 use std::io::{Error, ErrorKind, Write};
@@ -133,22 +133,6 @@ fn read_cmd_file(path: &PathBuf) -> Result<FileJson, String> {
         .map_err(|e| format!("Failed to parse commands file at {}: {}", path.display(), e))?;
 
     Ok(json)
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct FileJson {
-    #[allow(dead_code)] // not read but used in serialization
-    version: u8,
-    commands: HashMap<String, String>,
-}
-
-impl FileJson {
-    pub fn new() -> Self {
-        Self {
-            version: 1,
-            commands: HashMap:: new(),
-        }
-    }
 }
 
 fn check_and_create_file() -> Result<PathBuf, String> {
