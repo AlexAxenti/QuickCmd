@@ -17,9 +17,9 @@ pub fn run() -> Result<(), String> {
         return Ok(())
     };
 
-    let cmds_path = check_and_create_file()?;
+    let cmds_path = check_or_create_file()?;
 
-    let mut json = read_cmd_file(&cmds_path)?;
+    let mut json = read_cmd_file_contents(&cmds_path)?;
 
     println!("{:#?}", cmds_path);
         

@@ -43,7 +43,7 @@ pub fn rename_file_if_exists(old_path: &PathBuf, new_path: &PathBuf) -> Result<(
     }
 }
 
-pub fn read_cmd_file(path: &PathBuf) -> Result<FileJson, String> {
+pub fn read_cmd_file_contents(path: &PathBuf) -> Result<FileJson, String> {
     println!("{:#?}", path);
     let contents = fs::read_to_string(path)
         .map_err(|e| format!("Failed to read commands file at {}: {}", path.display(), e))?;
@@ -54,7 +54,7 @@ pub fn read_cmd_file(path: &PathBuf) -> Result<FileJson, String> {
     Ok(json)
 }
 
-pub fn check_and_create_file() -> Result<PathBuf, String> {
+pub fn check_or_create_file() -> Result<PathBuf, String> {
     if let Some(proj_dirs) = ProjectDirs::from("com", "QuickCmd", "qc") {
         let app_data_dir = proj_dirs.data_dir();
 
