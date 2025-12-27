@@ -113,6 +113,12 @@ Examples:
 fn main() {
     let cli = Cli::parse();
 
+    let cmds_path = check_and_create_file().unwrap_or_else(|err| {
+        eprintln!("Error: {err}");
+        std::process::exit(1);
+    });
+        
+
     match &cli.command {
         Commands::Save { name, cmd } => {
             check_and_create_file();
@@ -149,7 +155,7 @@ fn check_and_create_file() -> Result<PathBuf, String> {
 
         let cmds_file_path = app_data_dir.join("cmds.json");
 
-        if let Err(_) = create_dir_all(&app_data_dir) {
+        if let Err(_) = create_dir_all(app_data_dir) {
             return Err(String::from("Unable to create commands file"));
         }
 
