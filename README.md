@@ -2,8 +2,6 @@
 
 QuickCmd (`qc`) is a small CLI tool that lets you save and run frequently used shell commands so you don’t have to memorize them or repeatedly retype them.
 
-Think of it like local, personal command aliases — but persistent, explicit, and easy to manage.
-
 ---
 
 ## Features
