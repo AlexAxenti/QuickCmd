@@ -34,7 +34,7 @@ cargo install --path . --force
     -  qc-windows-x86_64.exe
     - qc-linux-x86_64
     - qc-macos-x86_64
-3. Put it somewhere on your `PATH`
+3. Put it somewhere already on your `PATH`
 
 #### Linux/macOS
 ```bash
@@ -45,6 +45,11 @@ sudo mv qc-<os>-x86_64 /usr/local/bin/qc
 #### Windows
 1. Rename to `qc.exe`
 2. Move it to a folder on PATH
+
+Test installation with:
+```bash
+qc --version
+```
 
 ## Usage:
 
