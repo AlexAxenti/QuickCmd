@@ -16,19 +16,24 @@ QuickCmd (`qc`) is a small CLI tool that lets you save and run frequently used s
 
 ## Installation
 
-### Option 1: Install with Cargo (Rust required)
+### Option 1: One-line install ("Linux / macOS") (No Rust required)
+```bash
+curl -fsSL https://raw.githubusercontent.com/AlexAxenti/QuickCmd/main/install.sh | sh
+```
 
-From this repo:
+### Option 2: Install with Cargo (Rust required)
+
+Remotely from GitHub repo:
 ```bash
 cargo install --git https://github.com/AlexAxenti/QuickCmd --locked
 ```
 
-Or after cloing locally:
+Or after cloning locally:
 ```bash
 cargo install --path . --force
 ```
 
-### Option 2: Download a prebuilt binary (no Rust required)
+### Option 3: Download a prebuilt binary (no Rust required)
 1. Go to [Releases](https://github.com/AlexAxenti/QuickCmd/releases) on GitHub
 2. Download the binary for your OS:
     -  qc-windows-x86_64.exe
