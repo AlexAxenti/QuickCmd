@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and attach binaries
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            bin: qc.exe
+            asset: qc-windows-x86_64.exe
+          - os: ubuntu-latest
+            bin: qc
+            asset: qc-linux-x86_64
+          - os: macos-latest
+            bin: qc
+            asset: qc-macos-x86_64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build (release)
+        run: cargo build --release
+
+      # Rename the output binary so the release assets are clearly labeled per OS
+      - name: Prepare asset (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Copy-Item "target/release/${{ matrix.bin }}" "${{ matrix.asset }}"
+
+      - name: Prepare asset (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cp "target/release/${{ matrix.bin }}" "${{ matrix.asset }}"
+          chmod +x "${{ matrix.asset }}"
+
+      - name: Upload artifact (Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset }}
