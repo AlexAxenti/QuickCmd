@@ -1,4 +1,5 @@
 use crate::model::FileJson;
+use std::process::{Command, ExitStatus};
 
 pub fn remove_command(json: &mut FileJson, cmd_name: &str) -> Option<String> {
     json.commands.remove(cmd_name)
@@ -22,3 +23,28 @@ pub fn list_commands(json: &FileJson) {
         println!(" {name}");
     }
 }
+
+pub fn run_command(json: &FileJson, cmd_name: &str) -> Result<(), String> {
+    let cmd = json.commands.get(cmd_name).ok_or_else(|| format!("Unable to find command: {cmd_name}"))?;
+
+    let status = run_in_shell(cmd).map_err(|err| format!("Failed to run command: {err}"))?;
+
+    if status.success() {
+        return Ok(())
+    } else {
+        return Err(format!("Command exited with status: {status}"))
+    }
+}
+
+fn run_in_shell(cmd: &str) -> std::io::Result<ExitStatus> {
+    if cfg!(windows) {
+        Command::new("cmd")
+            .args(["/C", cmd])
+            .status()
+    } else {
+        Command::new("sh")
+            .args(["-c", cmd])
+            .status()
+    }
+}
+

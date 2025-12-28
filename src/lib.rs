@@ -13,19 +13,28 @@ use serde_json;
 pub fn run() -> Result<(), String> {
     let cli = Cli::parse();
 
+    // Guard further logic if it's not in the enum of subcommands
     let Some(command) = cli.command else {
         return Ok(())
     };
 
-    let cmds_path = check_or_create_file()?;
+    run_sub_command(&command)?;
 
-    let mut json = read_cmd_file_contents(&cmds_path)?;
+    Ok(())
+}
 
-    println!("{:#?}", cmds_path);
+fn run_sub_command(sub_command: &Commands) -> Result<(), String> {
+    let cmds_file_path = create_path()?;
+
+    if !cmds_file_path.exists() {
+        initialize_file(&cmds_file_path)?;
+    }
+
+    let mut json = read_cmd_file_contents(&cmds_file_path)?;
         
     let mut is_dirty = false;
 
-    match command {
+    match sub_command {
         Commands::Save { name, cmd } => {
             let cmd = cmd.join(" ");
             save_command(&mut json, &name, &cmd);
@@ -33,7 +42,7 @@ pub fn run() -> Result<(), String> {
             println!("Saved command: \n {name}: {cmd}");
         },
         Commands::Run { name } => {
-            println!("run command called: {name}");
+            run_command(&json, &name)?;
         },
         Commands::List => {
             list_commands(&json);
@@ -58,7 +67,7 @@ pub fn run() -> Result<(), String> {
     if is_dirty {
         let contents = serde_json::to_string_pretty(&json)
             .map_err(|err| format!("Failed to serialize commands file: {err}"))?;
-        update_file(&cmds_path, &contents)?; 
+        update_file(&cmds_file_path, &contents)?; 
     }
 
     Ok(())

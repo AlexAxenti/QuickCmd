@@ -6,6 +6,33 @@ use std::io::{Error, ErrorKind, Write};
 use std::fs;
 use std::path::PathBuf;
 
+pub fn create_path() -> Result<PathBuf, String> {
+    let proj_dirs = ProjectDirs::from("com", "QuickCmd", "qc")
+        .ok_or_else(|| format!("Unable to create qc path"))?;
+
+    let app_data_dir = proj_dirs.data_dir();
+
+    let cmds_file_path = app_data_dir.join("cmds.json");
+
+    Ok(cmds_file_path)
+}
+
+pub fn initialize_file(cmds_file_path: &PathBuf) -> Result<(), String> {
+    let dir_path = cmds_file_path.parent().ok_or_else(|| format!("Unable to find qc directory"))?;
+
+    fs::create_dir_all(dir_path)
+            .map_err(|err| format!("Unable to create commands directory: {err}"))?;
+
+    let json = FileJson::new();
+    let contents = serde_json::to_string_pretty(&json)
+        .map_err(|err| format!("Failed to serialize initialize commands file: {err}"))?;
+
+    write_and_sync(&cmds_file_path, &contents)
+        .map_err(|err| format!("Failed to write while initializing commands file: {err}"))?;
+
+    Ok(())
+}
+
 pub fn update_file(path: &PathBuf, contents: &str) -> Result<(), String> {
     let tmp_path = path.with_added_extension("tmp");
     let bak_path = path.with_added_extension("bak");
@@ -19,7 +46,7 @@ pub fn update_file(path: &PathBuf, contents: &str) -> Result<(), String> {
     Ok(())
 }
 
-pub fn write_and_sync(path: &PathBuf, contents: &str) -> Result<(), Error> {
+fn write_and_sync(path: &PathBuf, contents: &str) -> Result<(), Error> {
     let mut f = fs::File::create(&path)?;
     f.write_all(contents.as_bytes())?;
     f.sync_all()?;
@@ -44,7 +71,6 @@ pub fn rename_file_if_exists(old_path: &PathBuf, new_path: &PathBuf) -> Result<(
 }
 
 pub fn read_cmd_file_contents(path: &PathBuf) -> Result<FileJson, String> {
-    println!("{:#?}", path);
     let contents = fs::read_to_string(path)
         .map_err(|e| format!("Failed to read commands file at {}: {}", path.display(), e))?;
 
@@ -52,29 +78,4 @@ pub fn read_cmd_file_contents(path: &PathBuf) -> Result<FileJson, String> {
         .map_err(|e| format!("Failed to parse commands file at {}: {}", path.display(), e))?;
 
     Ok(json)
-}
-
-pub fn check_or_create_file() -> Result<PathBuf, String> {
-    if let Some(proj_dirs) = ProjectDirs::from("com", "QuickCmd", "qc") {
-        let app_data_dir = proj_dirs.data_dir();
-
-        let cmds_file_path = app_data_dir.join("cmds.json");
-
-        fs::create_dir_all(app_data_dir)
-            .map_err(|err| format!("Unable to create commands directory: {err}"))?;
-
-        if !cmds_file_path.exists() {
-            let json = FileJson::new();
-            let contents = serde_json::to_string_pretty(&json)
-                .map_err(|err| format!("Failed to serialize initialize commands file: {err}"))?;
-
-            write_and_sync(&cmds_file_path, &contents)
-                .map_err(|err| format!("Failed to write while initializing commands file: {err}"))?;
-        }
-
-        return Ok(cmds_file_path);
-
-    } else {
-        Err(String::from("Unable to find path"))
-    }
 }
