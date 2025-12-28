@@ -23,7 +23,7 @@ curl -fsSL https://raw.githubusercontent.com/AlexAxenti/QuickCmd/main/install.sh
 
 Consider saving the installer itself into QuickCmd for future updates!
 ```bash
-qc s update-qc "curl -fsSL https://raw.githubusercontent.com/AlexAxenti/QuickCmd/main/install.sh | bash"
+qc s update-qc "curl -fsSL https://raw.githubusercontent.com/AlexAxenti/QuickCmd/main/install.sh | sh"
 ```
 
 ### Option 2: Install with Cargo (Rust required)
