@@ -67,6 +67,7 @@ qc --version
 
 ```bash
 qc s up -- docker compose up -d
+# Use quotations with shell operators:
 qc s update "sudo apt update && sudo apt upgrade" 
 ```
 
