@@ -61,6 +61,8 @@ Test installation with:
 qc --version
 ```
 
+---
+
 ## Usage:
 
 ### Save a command
