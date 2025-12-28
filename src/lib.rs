@@ -44,8 +44,8 @@ fn run_sub_command(sub_command: &Commands) -> Result<(), String> {
         Commands::Run { name } => {
             run_command(&json, &name)?;
         },
-        Commands::List => {
-            list_commands(&json);
+        Commands::List { all } => {
+            list_commands(&json, *all);
         },
         Commands::Show { name } => {
             match show_command(&json, &name) {
@@ -61,6 +61,9 @@ fn run_sub_command(sub_command: &Commands) -> Result<(), String> {
                 },
                 None => eprintln!("Unable to find command: {name}"),
             }
+        },
+        Commands::Info => {
+            info_command();
         }
     }
 

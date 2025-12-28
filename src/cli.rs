@@ -11,8 +11,7 @@ use clap::{Parser, Subcommand};
     long_about = None,
     after_help = r#"Examples:
     qc s up -- docker compose up -d
-    qc r up
-"#,
+    qc r up"#,
 )]
 #[command(propagate_version = true)]
 pub struct Cli {
@@ -33,8 +32,7 @@ Everything after `--` is stored exactly as written.
 
 Examples:
     qc s up -- docker compose up -d
-    qc save logs "docker logs -f app"
-"#
+    qc save logs "docker logs -f app""#
     )]
     Save { 
         name: String,
@@ -51,8 +49,7 @@ Run a saved command
 Examples:
     qc s up -- docker compose up -d
     qc r up
-    qc run up
-"#
+    qc run up"#
     )]
     Run {
         name: String,
@@ -66,10 +63,13 @@ List all saved commands
 
 Examples:
     qc ls
-    qc list
-"#
+    qc list"#
     )]
-    List,
+    List {
+        /// Show full command text for each entry
+        #[arg(short = 'a', long = "all")]
+        all: bool
+    },
     #[command(
         alias = "sh",
         // visible_alias = "sh",
@@ -80,8 +80,7 @@ Show the command saved to a name
 Examples:
     qc s up -- docker compose up -d
     qc sh up
-    qc show up
-"#
+    qc show up"#
     )]
     Show {
         name: String,
@@ -96,10 +95,18 @@ Remove a saved command
 Examples:
     qc s up -- docker compose up -d
     qc rm up
-    qc remove up
-"#
+    qc remove up"#
     )]
     Remove {
         name: String
-    }
+    },
+    #[command(
+        about = "Info about QuickCmd",
+        long_about = r#"
+Info about QuickCmd such as:
+- Path used
+- Debugging tips
+- Usage recommendations, etc."#
+    )]
+    Info
 }
