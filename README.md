@@ -1,16 +1,99 @@
-# QuickCmd
+# QuickCmd (qc)
 
-Initial contract:
+QuickCmd (`qc`) is a small CLI tool that lets you save and run frequently used shell commands so you don’t have to memorize them or repeatedly retype them.
 
-Binary: qc
-Commands:
-    qc s <name> [-- <cmd>]
-    qc r <name>
-    qc ls
-    qc sh <name>
-    qc rm <name>
-Storage: 
-    %APPDATA$\qc\commands.json
-Execution:
-    Windows only
-    via cmd.exe /C
+Think of it like local, personal command aliases — but persistent, explicit, and easy to manage.
+
+---
+
+## Features
+
+- Save shell commands by name
+- Run them later with a short alias
+- Supports pipes (`|`), chaining (`&&`), redirects, etc.
+- Commands are stored locally (per user)
+- Quick and easy to type
+
+---
+
+## Installation
+
+### Option 1: Install with Cargo (Rust required)
+
+From this repo:
+```bash
+cargo install --git https://github.com/AlexAxenti/QuickCmd --locked
+```
+
+Or after cloing locally:
+```bash
+cargo install --path . --force
+```
+
+### Option 2: Download a prebuilt binary (no Rust required)
+1. Go to **Releases** on GitHub
+2. Download the binary for your OS:
+    -  qc-windows-x86_64.exe
+    - qc-linux-x86_64
+    - qc-macos-x86_64
+3. Put it somewhere on your `PATH`
+
+#### Linux/macOS
+```bash
+chmod +x qc-<os>-x86_64
+sudo mv qc-<os>-x86_64 /usr/local/bin/qc
+```
+
+#### Windows
+1. Rename to `qc.exe`
+2. Move it to a folder on PATH
+
+## Usage:
+
+### Save a command
+
+```bash
+qc s up -- docker compose up -d
+```
+
+### Run a command
+
+```bash
+qc r up
+```
+
+### List all command
+
+```bash
+qc ls
+```
+
+
+### Show a command
+
+```bash
+qc sh up
+```
+
+
+### Remove a command
+
+```bash
+qc rm up
+```
+
+## Shell operators (important)
+
+If your command uses shell operators like:
+- pipes (|)
+- chaining (&&, &)
+- redirects (>, >>)
+- parentheses (())
+
+wrap the entire command in quotes, otherwise your shell will interpret it before qc can save it: 
+```bash
+qc s example "echo one && echo two) | grep two"
+```
+
+## License
+No license yet (all rights reserved for now).
