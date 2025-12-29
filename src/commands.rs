@@ -66,7 +66,7 @@ Windows:
 
 Linux:
   ~/.local/share/shellstash/st/cmds.json
-    (or $XDG_DATA_HOME/ShellStash/st/cmds.json)
+    (or $XDG_DATA_HOME/shellstash/st/cmds.json)
 
 MacOS:
   ~/Library/Application Support/ShellStash/st/cmds.json
