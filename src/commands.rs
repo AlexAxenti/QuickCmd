@@ -1,5 +1,5 @@
 use crate::model::FileJson;
-use std::{fs::File, io::Write, process::{Command, ExitStatus, Stdio}};
+use std::{io::Write, process::{Command, ExitStatus, Stdio}};
 
 pub fn remove_command(json: &mut FileJson, cmd_name: &str) -> Option<String> {
     json.commands.remove(cmd_name)
