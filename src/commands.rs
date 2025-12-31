@@ -1,5 +1,5 @@
 use crate::model::FileJson;
-use std::process::{Command, ExitStatus};
+use std::{fs::File, io::Write, process::{Command, ExitStatus, Stdio}};
 
 pub fn remove_command(json: &mut FileJson, cmd_name: &str) -> Option<String> {
     json.commands.remove(cmd_name)
@@ -50,6 +50,29 @@ fn run_in_shell(cmd: &str) -> std::io::Result<ExitStatus> {
         Command::new("sh")
             .args(["-c", cmd])
             .status()
+    }
+}
+
+pub fn copy_command(json: &FileJson, cmd_name: &str) -> Result<(), String> {
+    let cmd = json.commands.get(cmd_name).ok_or_else(|| format!("Unable to find command: {cmd_name}"))?;
+
+    let mut child = Command::new("cmd")
+        .args(["/C", "clip"])
+        .stdin(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to start clipboard process: {e}"))?;
+
+    {
+        let stdin = child.stdin.as_mut()
+            .ok_or("Failed to open clipboard stdin")?;
+
+        stdin.write_all(cmd.as_bytes())
+            .map_err(|e| format!("Failed to write to clipboard: {e}"))?;
+
+        child.wait()
+            .map_err(|e| format!("Clipboard process failed: {e}"))?;
+
+        Ok(())
     }
 }
 

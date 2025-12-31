@@ -104,6 +104,19 @@ Examples:
     )]
     Remove {
         name: String
+    },#[command(
+        alias = "c",
+        // visible_alias = "rm",
+        about = "Copy a command to clipboard (alias: c)",
+        long_about = r#"
+Copy a saved command to clipboard
+
+Examples:
+    st s up -- docker compose up -d
+    st c up"#
+    )]
+    Copy {
+        name: String
     },
     #[command(
         about = "Info about ShellStash",

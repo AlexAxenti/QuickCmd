@@ -63,6 +63,9 @@ fn run_sub_command(sub_command: &Commands) -> Result<(), String> {
                 None => eprintln!("Unable to find command: {name}"),
             }
         },
+        Commands::Copy { name } => {
+            copy_command(&json, name)?;
+        }
         Commands::Info => {
             info_command();
         }
