@@ -55,9 +55,9 @@ fn run_in_shell(cmd: &str) -> std::io::Result<ExitStatus> {
 
 pub fn copy_command(json: &FileJson, cmd_name: &str) -> Result<(), String> {
     let cmd = json.commands.get(cmd_name).ok_or_else(|| format!("Unable to find command: {cmd_name}"))?;
+    let mut cmd_process = clipboard_command()?;
 
-    let mut child = Command::new("cmd")
-        .args(["/C", "clip"])
+    let mut child = cmd_process
         .stdin(Stdio::piped())
         .spawn()
         .map_err(|e| format!("Failed to start clipboard process: {e}"))?;
@@ -70,10 +70,34 @@ pub fn copy_command(json: &FileJson, cmd_name: &str) -> Result<(), String> {
             .map_err(|e| format!("Failed to write to clipboard: {e}"))?;
     }
     
-    child.wait()
+    let status = child.wait()
             .map_err(|e| format!("Clipboard process failed: {e}"))?;
 
+    if !status.success() {
+        return Err("Clipboard command exited unsuccessfully".into());
+    }
+
     Ok(())
+}
+
+fn clipboard_command() -> Result<Command, String> {
+    if cfg!(target_os = "windows") {
+        let mut cmd = Command::new("cmd");
+        cmd.args(["/C", "clip"]);
+        Ok(cmd)
+    } else if cfg!(target_os = "macos") {
+        Ok(Command::new("pbcopy"))
+    } else {
+        if Command::new("wl-copy").output().is_ok() {
+            Ok(Command::new("wl-copy"))
+        } else if Command::new("xclip").output().is_ok() {
+            let mut cmd = Command::new("xclip");
+            cmd.args(["-selection", "clipboard"]);
+            Ok(cmd)
+        } else {
+            Err(format!("No clipboard utility found"))
+        }
+    }
 }
 
 pub fn info_command() {
